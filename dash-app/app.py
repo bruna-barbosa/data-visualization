@@ -63,20 +63,19 @@ CONTENT_STYLE = {
 }
 
 sidebar = html.Div([
-    html.Div([
-        html.H1("Hotel Bookings"),
-        html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
-        # html.Img(src=app.get_asset_url("left_pane.png")),
-        html.Img(src="assets/icons/6.png"),
+            html.H1("Hotel Bookings"),
+            html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
+            # html.Img(src=app.get_asset_url("left_pane.png")),
+            html.Img(src="assets/icons/6.png"),
+            
+            html.Button(id='kids-button', children="Guests with Kids", n_clicks=0),
+            
+            html.Button(id='nokids-button', children="Guests without Kids", n_clicks=0),
+            
+            html.Button(id='all-button', children="All Guests", n_clicks=0),
+        ], 
         
-        html.Button(id='kids-button', children="Guests with Kids", n_clicks=0),
-        
-        html.Button(id='nokids-button', children="Guests without Kids", n_clicks=0),
-        
-        html.Button(id='all-button', children="All Guests", n_clicks=0),
-        ], id='left-container'),
-
-], id='container')
+        id='left-container')
 
 """     html.Div([
         html.Div(className='row', children=[
