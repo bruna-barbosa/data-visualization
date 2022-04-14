@@ -1,0 +1,192 @@
+body {
+    background-color:#E0FFF8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  img {
+    width: 250px;
+    margin-left: 20px;
+    margin-right: 10px;
+    margin-bottom: 5px;
+  }
+  /********************* TEXT *********************/
+  h1 {
+    margin-top: 40px;
+    margin-left: 20px;
+    margin-right: 20px;
+    text-transform: uppercase;
+    font-size: 40px;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  p {
+    margin-left: 20px;
+    margin-right: 20px;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+  }
+  .dropdown-labels {
+    margin-left: 20px;
+    color: white;
+    font-weight: bold;
+  }
+  .other-labels {
+    margin-left: 20px;
+    color: #E9B000;
+    font-weight: bold;
+  }
+  /********************* SECTIONS *********************/
+  #container {
+    width: 100%; 
+    overflow: hidden;
+  }
+  #left-container {
+    height: 850px;
+    width: 300px;
+    background-color:#1D74C1;  
+    float: left;
+    margin: 40px;
+    border-radius: 5px;
+  }
+  #right-container {
+    margin-left: 340px;
+  }
+  #visualisation {
+    margin-top: 30px;
+    width: 100%; overflow: hidden;
+    height: 430px;
+  }
+  #histogram {
+    width: 700px; 
+    height: 430px;
+    margin-left: 35px;
+    float: left; 
+  }
+  #barplot {
+    width: 700px; 
+    height: 430px;
+    margin-left: 800px;
+    margin-right: 20px;
+  }
+  #data-extract {
+    margin-top: 30px;
+    width: 100%; overflow: hidden;
+    height: 400px;
+  }
+  #table {
+    height: 420px;
+    width: 800px; 
+    float: left;
+    margin-left: 35px;
+    margin-top: 15px;
+  }
+  #table-side {
+    width: 400px;
+    margin-left: 900px;
+    margin-top: 60px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+  }
+  
+  /********************* BUTTONS *********************/
+  #kids-button {
+    width: 210px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 45px;
+    margin-top: 10px;
+    border: 0px;
+    cursor: pointer;
+    background-color: #E24E42;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+  }
+  #kids-button:hover {
+    background-color: #E9B000;
+    color: white;
+  }
+
+  #nokids-button {
+    width: 210px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 45px;
+    margin-top: 10px;
+    border: 0px;
+    cursor: pointer;
+    background-color: #E24E42;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+  }
+  #nokids-button:hover {
+    background-color: #E9B000;
+    color: white;
+  }
+
+  #all-button {
+    width: 210px;
+    height: 40px;
+    border-radius: 5px;
+    margin-left: 45px;
+    margin-top: 10px;
+    border: 0px;
+    cursor: pointer;
+    background-color: #E24E42;
+    color: white;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-transform: uppercase;
+    font-size: 15px;
+  }
+  #all-button:hover {
+    background-color: #E9B000;
+    color: white;
+  }
+
+  /********************* DROPDOWNS *********************/
+  .dropdown {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-top: 5px;
+  }
+  .dropdown .Select-control{
+    background-color: white;
+  }
+  .dropdown .Select-menu-outer{
+    background-color: white;
+  }
+  .dropdown .Select-value{
+    background-color: #3BA27A;
+    color: white;
+    font-size: 14px;  
+  }
+  .dropdown .VirtualizedSelectFocusedOption {
+    background-color: #a5ecd1;
+    color: #E24E42;
+  }
+  .dropdown .VirtualizedSelectOption  {
+    font-size: 14px;
+  }
+  /********************* TOGGLES *********************/
+  .toggle {
+    margin-top: 8px;
+  }
+  /********************* SLIDER *********************/
+  #n-slider {
+    margin-top: 8px;
+  }
+  #n-slider .rc-slider-handle  {
+    background-color: #E9B000;
+    border: 0px;
+  }
+  #n-slider .rc-slider-track {
+    background-color: #E6E6E6;
+  }
+  #n-slider .rc-slider-dot-active {  
+    border-color: #E6E6E6;
+  }
