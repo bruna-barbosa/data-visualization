@@ -40,6 +40,7 @@ body {
   /********************* SECTIONS *********************/
   #container {
     width: 100%;
+    overflow: visible;
   }
 
   #left-container {
