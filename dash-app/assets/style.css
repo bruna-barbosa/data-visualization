@@ -38,6 +38,10 @@ body {
     font-weight: bold;
   }
   /********************* SECTIONS *********************/
+  #container {
+    width: 100%;
+  }
+
   #left-container {
     height: 850px;
     width: 300px;
