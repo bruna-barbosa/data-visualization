@@ -62,8 +62,7 @@ CONTENT_STYLE = {
     "padding": "2rem 1rem",
 }
 
-sidebar = dbc.Container(
-        html.Div([
+sidebar = html.Div([
             html.H1("Hotel Bookings"),
             html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
             # html.Img(src=app.get_asset_url("left_pane.png")),
@@ -77,7 +76,6 @@ sidebar = dbc.Container(
         ], 
         
         id='left-container')
-)
 
 """     html.Div([
         html.Div(className='row', children=[
@@ -121,7 +119,7 @@ content = dbc.Container(
     fluid=True, style=CONTENT_STYLE
 )
 
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content], id='container')
 
 """ @app.callback(
     [Output(component_id='barplot', component_property='figure'),
