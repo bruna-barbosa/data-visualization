@@ -38,10 +38,6 @@ body {
     font-weight: bold;
   }
   /********************* SECTIONS *********************/
-  #container {
-    width: 100%; 
-    overflow: hidden;
-  }
   #left-container {
     height: 850px;
     width: 300px;

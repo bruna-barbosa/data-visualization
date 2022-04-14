@@ -26,7 +26,7 @@ import sort_dataframeby_monthorweek as sd
 
 # ********************* DATA PREPARATION *********************
 # Load data
-data = pd.read_csv("hotel_bookings.csv")
+data = pd.read_csv("data/hotel_bookings.csv")
 
 # Format data for dashboard
 data["children"] = data["children"].fillna(0) # null chilrdren replace with 0
@@ -117,7 +117,7 @@ content = dbc.Container(
             align="center",
         ),
     ],
-    fluid=True,
+    fluid=True, style=CONTENT_STYLE
 )
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
