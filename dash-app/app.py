@@ -38,7 +38,6 @@ data = data[~filter]
 data["is_canceled"] = data["is_canceled"].replace({1:"Yes", 0:"No"})
 data["is_repeated_guest"] = data["is_repeated_guest"].replace({1:"Yes", 0:"No"})
 
-
 # ********************* DASH APP *********************
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
@@ -123,13 +122,12 @@ content = html.Div([
     ])
 
 # Visual 1: Barplot (With kids)
-def barplot_kids():
+def barplot():
     #with kids hotel and year distribution 
 
     guest_with_kids_hotel = data[(data['children'] != 0) | (data['babies'] != 0)].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
     guest_with_kids_hotel.columns = ['arrival_date_year','hotel' , 'guest with kids']
     slider_guest_with_kids_hotel = guest_with_kids_hotel.pivot_table('guest with kids', ['hotel'], 'arrival_date_year')
-    #print(slider_guest_with_kids_hotel[2015], slider_guest_with_kids_hotel.index, guest with kids)
 
     # An empty graph object
     fig_bar_kids = go.Figure(layout = dict(colorway = ['#E24E42','#E24E42']))
@@ -179,7 +177,7 @@ def barplot_kids():
                                     sliders=sliders,
                                 ))
 
-    return barplot_kids
+    return go.Figure(data=slider_guest_with_kids_hotel, layout=fig_bar_kids)
 
 # Visual 2: Map
 def map():
