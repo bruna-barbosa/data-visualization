@@ -146,7 +146,6 @@ def barplot():
     # First seen trace
     fig_bar_kids.data[0].visible = True
 
-
     # Lets create our slider, one option for each trace
     steps = []
     for i in range(len(fig_bar_kids.data)):
