@@ -39,19 +39,22 @@ body {
   }
   /********************* SECTIONS *********************/
   #container {
-    width: 100%; 
-    overflow: hidden;
+    width: 100%;
+    overflow: visible;
   }
+
   #left-container {
-    height: 850px;
+    height: 1000px;
     width: 300px;
     background-color:#1D74C1;  
     float: left;
-    margin: 40px;
-    border-radius: 5px;
+    margin: 20px;
+    border-radius: 10px;
   }
   #right-container {
-    margin-left: 340px;
+    margin-left: 320x;
+    margin-top: 40px;
+    background-color:#1D74C1;
   }
   #visualisation {
     margin-top: 30px;
@@ -60,31 +63,39 @@ body {
     height: 430px;
   }
   #barplot {
-    width: 700px; 
-    height: 430px;
-    margin-left: 30px;
+    /* width: 700px;  */
+    /* height: 430px; */
+    /* margin-left: 30px;
     margin-right: 20px;
-    float: left; 
+    float: left;  */
+    border-radius: 10px;
+    margin-top: 20px;
   }
   #map {
-    width: 700px; 
-    height: 430px;
-    margin-left: 30px;
+    /* width: 700px;  */
+    /* height: 430px; */
+    /* margin-left: 30px;
     margin-right: 20px;
-    display: inline-block;
+    display: inline-block; */
+    border-radius: 10px;
+    margin-top: 20px;
   }
   #piecharts {
-    width: 700px; 
-    height: 430px;
-    margin-left: 30px;
+    /* width: 700px;  */
+    /* height: 430px; */
+    /* margin-left: 30px;
     margin-right: 20px;
-    float: right;
+    float: right; */
+    border-radius: 10px;
+    background-color:#1D74C1; 
+    
   }
   #scatterplot {
-    width: 700px; 
-    height: 430px;
-    margin-left: 30px;
-    display: inline-block;
+    /* width: 700px;  */
+    /* height: 430px; */
+    /* margin-left: 30px;
+    display: inline-block; */
+    border-radius: 10px;
   }
   #data-extract {
     margin-top: 30px;
