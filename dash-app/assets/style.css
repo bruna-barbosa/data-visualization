@@ -39,9 +39,10 @@ body {
   }
   /********************* SECTIONS *********************/
   #container {
-    width: 100%; 
-    overflow: hidden;
+    width: 100%;
+    overflow: visible;
   }
+
   #left-container {
     height: 1000px;
     width: 300px;
