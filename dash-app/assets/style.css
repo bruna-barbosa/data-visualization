@@ -37,6 +37,10 @@ body {
     color: #E9B000;
     font-weight: bold;
   }
+
+  label {
+    color: white;
+  }
   /********************* SECTIONS *********************/
   #container {
     width: 100%;
@@ -44,11 +48,13 @@ body {
   }
 
   #left-container {
-    height: 1000px;
+    height: 1080px;
     width: 300px;
     background-color:#1D74C1;  
     float: left;
-    margin: 20px;
+    margin-right: 20px;
+    margin-left: 20px;
+    margin-bottom: 20px;
     border-radius: 10px;
   }
   #right-container {
