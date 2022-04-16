@@ -138,143 +138,99 @@ app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 ############################################First Bar Plot##########################################################
 @app.callback(
     Output(component_id='barplot', component_property='figure'),
-    [Input(component_id='checkbox', component_property='value')]
+    [Input(component_id='checkbox', component_property='value'),
+    Input(component_id='rangeslider', component_property='value')]
 ) 
-def barplot(kids):
-    #with kids hotel and year distribution
-    guest_with_kids_hotel = data[data['Kids'].isin(kids)].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
+def barplot(kids,year):
+    #applying filters
+    filters = (data['Kids'].isin(kids)) & \
+              (data['arrival_date_year'].between(year[0],year[1])
+              )
+    guest_with_kids_hotel = data[filters].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
     guest_with_kids_hotel.columns = ['arrival_date_year','hotel' , 'guest with kids']
-    slider_guest_with_kids_hotel = guest_with_kids_hotel.pivot_table('guest with kids', ['hotel'], 'arrival_date_year')
+    #slider_guest_with_kids_hotel = guest_with_kids_hotel.pivot_table('guest with kids', ['hotel'], 'arrival_date_year')
 
-    # An empty graph object
-    fig_bar_kids = go.Figure(layout = dict(colorway = ['#E24E42','#E24E42']))
+    guest_without_kid = dict(type='bar',
+                    x=guest_with_kids_hotel['hotel'],
+                    y=guest_with_kids_hotel['guest with kids'], 
+                    name='With kids guest'
+                   )
+    resort_layout =dict(title=dict(text='Hotel reservations with kids', font = dict(color = 'white')),
+                   yaxis=dict(title='Number of guests',
+                             range=[0,80*(10**3)],showgrid = False, color = 'white'
+                            ), 
+                            xaxis=dict(color="white"),plot_bgcolor = '#1D74C1',
+                                paper_bgcolor = '#1D74C1', colorway = ['#E24E42','#E24E42'])
 
-    # Each year defines a new hidden (implies visible=False) trace in our visualization
-    for year in slider_guest_with_kids_hotel.columns:
-        fig_bar_kids.add_trace(dict(type='bar',
-                        x= slider_guest_with_kids_hotel.index,
-                        y=slider_guest_with_kids_hotel[year],
-                        name=year,
-                        showlegend=False,
-                        visible=False,
-                        )
-                )
-
-    # First seen trace
-    fig_bar_kids.data[0].visible = True
-
-    # Lets create our slider, one option for each trace
-    steps = []
-    for i in range(len(fig_bar_kids.data)):
-        step = dict(
-            label='Year ' + str(2015 + i),
-            method="restyle", #there are four methods restyle changes the type of an argument (in this case if visible or not)
-            args=["visible", [False] * len(fig_bar_kids.data)], # Changes all to Not visible
-        )
-        step["args"][1][i] = True  # Toggle i'th trace to "visible"
-        steps.append(step)
-
-        
-    sliders = [dict(
-        active=2015,
-        pad={"t": 100},
-        steps=steps,
-        font = dict(color = 'white')
-    )]
-
-    fig_bar_kids.update_layout(
-        dict(
-            title=dict(
-                text='Hotel reservations from guests with kids between 2015 and 2017', 
-                font = dict(color = 'white')
-            ),
-            yaxis=dict(
-                title='Number of guests',
-                range=[0,5*(10**3)], 
-                showgrid = False, 
-                color = 'white' 
-            ),
-            plot_bgcolor = '#1D74C1',
-            paper_bgcolor = '#1D74C1',
-            xaxis=dict(color="white")
-        )
-    )
-
-    return fig_bar_kids
+    return go.Figure(data=guest_without_kid, layout=resort_layout)
 
 #############################################Second Choropleth######################################################
 @app.callback(
     Output(component_id='map', component_property='figure'),
-    [Input(component_id='checkbox', component_property='value')]
+    [Input(component_id='checkbox', component_property='value'),
+     Input(component_id='rangeslider', component_property='value')]
 )
-def map(kids):
+def map(kids,year):
 
-    country_wise_guests = data[data['is_canceled'] == 'No'].groupby(['country', 'hotel'], as_index=False).size()
-    country_wise_guests.columns = ['country', 'No of guests' ,'hotel']
+    filters = (data['Kids'].isin(kids)) & \
+              (data['arrival_date_year'].between(year[0],year[1]) & \
+              (data['is_canceled'] == 'No')
+              )
+
+    country_wise_guests = data[filters].groupby(['country'], as_index=False).size()
+    country_wise_guests.columns = ['country', 'No of guests' ]
     
-    basemap = folium.Map()
     guests_map = px.choropleth(country_wise_guests, locations = country_wise_guests['country'],
-                           color = country_wise_guests['No of guests'], hover_name = country_wise_guests['country'], 
-                           color_continuous_scale="sunset")
+                               color = country_wise_guests['No of guests'], 
+                               hover_name = country_wise_guests['country'], 
+                               color_continuous_scale="sunset")
     return guests_map 
 
 ############################################Third Scatter Plot######################################################
 @app.callback(
     Output(component_id='piecharts', component_property='figure'),
-    [Input(component_id='checkbox', component_property='value')]
+    [Input(component_id='checkbox', component_property='value'),
+    Input(component_id='rangeslider', component_property='value')]
 ) 
-def pie_chart(kids):
-    children_market_segment = data[data['Kids'].isin(kids)].groupby(['market_segment', 'hotel'], as_index=False).size()
+def pie_chart(kids,year):
+
+    filters = (data['Kids'].isin(kids)) & \
+            (data['arrival_date_year'].between(year[0],year[1])
+            )
+
+    children_market_segment = data[filters].groupby(['market_segment', 'hotel'], as_index=False).size()
     children_market_segment.columns= ['market_segment' ,'hotel', 'number_of_guest']
 
     filtered_by_hotel_df = children_market_segment#.loc[children_market_segment['hotel'] == input]
 
 
-    labels_market_nokids = filtered_by_hotel_df['market_segment']
+    fig_with_kid_market = px.pie(filtered_by_hotel_df ,values = 'number_of_guest' , names = 'market_segment' , 
+                             color_discrete_sequence=px.colors.sequential.Reds_r , title='market segment with kids') 
 
 
-    values_market_nokids = filtered_by_hotel_df['number_of_guest']
-
-    data_market_nokids = dict(type='pie', labels=labels_market_nokids, values=values_market_nokids)
-    layout_market_nokids = dict(title=dict(text='market segment with out kids'))
-
-    return  go.Figure(data=[data_market_nokids], layout=layout_market_nokids)
+    return  fig_with_kid_market
 
 ############################################Forth Scatter Plot######################################################
 @app.callback(
     Output(component_id='scatterplot1', component_property='figure'),
-     [Input(component_id='checkbox', component_property='value')])
-def scatterplot(kids):
-    # Function for creating a Scatterplot
-    
-    # Guests without children
-    no_children_month = data[data['Kids'].isin(kids)].groupby(['arrival_date_month'], as_index=False).size()
+     [Input(component_id='checkbox', component_property='value'),
+     Input(component_id='rangeslider', component_property='value')])
+def scatterplot(kids,year):
+
+    filters = (data['Kids'].isin(kids)) & \
+            (data['arrival_date_year'].between(year[0],year[1])
+            )
+
+    no_children_month = data[filters].groupby(['arrival_date_month'], as_index=False).size()
     no_children_month.rename(columns={"arrival_date_month": "month", "size": "number_of_guest"}, inplace=True)
     no_children_month=sort_month(no_children_month, 'month')
-    
-
-    # Guests with children
-    children_month = data[(data['children'] != 0) | (data['babies'] != 0)].groupby(['arrival_date_month'], as_index=False).size()
-    children_month.rename(columns={"arrival_date_month": "month", "size": "number_of_guest"}, inplace=True)
-    children_month=sort_month(children_month, 'month')
-    
-
-    children_month_trace1 = dict(type='scatter',
-                  x=children_month['month'],
-                  y=children_month['number_of_guest'],
-                  name='Guests with kids',
-                  line=dict(color='#E0FFF8')
-                  )
-
+   
     no_children_month_trace2 = dict(type='scatter',
                   x=no_children_month['month'],
                   y=no_children_month['number_of_guest'],
                   name='Guests without kids',
                   line=dict(color='#E9B000')
                   )
-
-    month_data = [children_month_trace1, no_children_month_trace2]
-
 
     month_layout = dict(title=dict(text='Favourite month of the year to travel with kids and without kids', font = dict(color = 'white')),
                   xaxis=dict(title='Months',showgrid = False, color = 'white'),
@@ -283,7 +239,7 @@ def scatterplot(kids):
                   paper_bgcolor = '#1D74C1',
                   )
 
-    return go.Figure(data=month_data, layout=month_layout)  
+    return go.Figure(data=no_children_month_trace2, layout=month_layout)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
