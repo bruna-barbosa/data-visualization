@@ -39,7 +39,6 @@ data["is_canceled"] = data["is_canceled"].replace({1:"Yes", 0:"No"})
 data["is_repeated_guest"] = data["is_repeated_guest"].replace({1:"Yes", 0:"No"})
 
 # ********************* DASH APP *********************
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 # Helper functions for dropdowns and slider
 def create_slider_marks(values):
@@ -49,6 +48,8 @@ def create_slider_marks(values):
 def sort_month(df, column_name):
     # Function for sorting months
     return sd.Sort_Dataframeby_Month(df, column_name)
+
+app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
     
 sidebar = html.Div([
             html.H1("Hotel Bookings"),
@@ -58,7 +59,6 @@ sidebar = html.Div([
             id='left-container'
         )
             
-
 content = html.Div([
    
     dbc.Container(
@@ -118,13 +118,20 @@ content = html.Div([
             align="center",
          ),
     ],    
-    fluid=True)
+    #fluid=True
+    )
     ])
 
-# Visual 1: Barplot (With kids)
-def barplot():
-    #with kids hotel and year distribution 
+app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
+############################################First Bar Plot##########################################################
+@app.callback(
+    Output(component_id='barplot', component_property='figure'),
+    [Input(component_id='kids_toggle', component_property='on'),
+     Input(component_id='nokids_toggle', component_property='on')]
+) 
+def barplot(kids, no_kids):
+    #with kids hotel and year distribution
     guest_with_kids_hotel = data[(data['children'] != 0) | (data['babies'] != 0)].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
     guest_with_kids_hotel.columns = ['arrival_date_year','hotel' , 'guest with kids']
     slider_guest_with_kids_hotel = guest_with_kids_hotel.pivot_table('guest with kids', ['hotel'], 'arrival_date_year')
@@ -164,6 +171,8 @@ def barplot():
         steps=steps,
         font = dict(color = 'white')
     )]
+    
+    return fig_bar_kids
 
 
     fig_bar_kids.update_layout(dict(title=dict(text='Hotel reservations from guests with kids between 2015 and 2017', font = dict(color = 'white')),
@@ -178,25 +187,52 @@ def barplot():
 
     return go.Figure(data=slider_guest_with_kids_hotel, layout=fig_bar_kids)
 
-# Visual 2: Map
-def map():
-    # Function for creating a Choropleth
-    country_wise_guests = data[data['is_canceled'] == 'No']['country'].value_counts().reset_index()
-    country_wise_guests.columns = ['country', 'number_guests']
+#############################################Second Choropleth######################################################
+@app.callback(
+    Output(component_id='map', component_property='figure'),
+    [Input(component_id='kids_toggle', component_property='on'),
+     Input(component_id='nokids_toggle', component_property='on')]
+)
+def map(kids, no_kids):
+
+    country_wise_guests = data[data['is_canceled'] == 'No'].groupby(['country', 'hotel'], as_index=False).size()
+    country_wise_guests.columns = ['country', 'No of guests' ,'hotel']
     
     basemap = folium.Map()
     guests_map = px.choropleth(country_wise_guests, locations = country_wise_guests['country'],
-                           color = country_wise_guests['number_guests'], hover_name = country_wise_guests['country'])
-    return map 
+                           color = country_wise_guests['No of guests'], hover_name = country_wise_guests['country'], 
+                           color_continuous_scale="sunset")
+    return guests_map 
 
-# Visual 3: Pie charts
+############################################Third Scatter Plot######################################################
+@app.callback(
+    Output(component_id='piecharts', component_property='figure'),
+    [Input(component_id='kids_toggle', component_property='on'),
+     Input(component_id='nokids_toggle', component_property='on')]
+) 
+def pie_chart(kids, no_kids):
+    children_market_segment = data[(data['children'] != 0) | (data['babies'] != 0)].groupby(['market_segment', 'hotel'], as_index=False).size()
+    children_market_segment.columns= ['market_segment' ,'hotel', 'number_of_guest']
 
+    filtered_by_hotel_df = children_market_segment#.loc[children_market_segment['hotel'] == input]
+
+
+    labels_market_nokids = filtered_by_hotel_df['market_segment']
+
+
+    values_market_nokids = filtered_by_hotel_df['number_of_guest']
+
+    data_market_nokids = dict(type='pie', labels=labels_market_nokids, values=values_market_nokids)
+    layout_market_nokids = dict(title=dict(text='market segment with out kids'))
+
+    return  go.Figure(data=[data_market_nokids], layout=layout_market_nokids)
+
+############################################Forth Scatter Plot######################################################
 @app.callback(
     Output(component_id='scatterplot1', component_property='figure'),
     [Input(component_id='kids_toggle', component_property='on'),
      Input(component_id='nokids_toggle', component_property='on')]
 ) 
-# Visual 4: Scatterplot
 def scatterplot(kids, no_kids):
     # Function for creating a Scatterplot
     
@@ -237,9 +273,6 @@ def scatterplot(kids, no_kids):
                   )
 
     return go.Figure(data=month_data, layout=month_layout)  
-
-
-app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 if __name__ == '__main__':
     app.run_server(debug=True)
