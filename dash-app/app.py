@@ -1,3 +1,5 @@
+from ctypes import alignment
+from turtle import width
 from matplotlib.pyplot import sca
 import seaborn as sns
 import numpy as np
@@ -38,6 +40,14 @@ data = data[~filter]
 data["is_canceled"] = data["is_canceled"].replace({1:"Yes", 0:"No"})
 data["is_repeated_guest"] = data["is_repeated_guest"].replace({1:"Yes", 0:"No"})
 
+filters = [(data['children']==0) & (data['babies']==0),
+            (data['children']>0),
+            (data['babies']>0)
+            ]
+categories = ["No Kids", "Children", "Babies"]
+data["Kids"] = np.select(filters, categories)
+
+
 # ********************* DASH APP *********************
 
 # Helper functions for dropdowns and slider
@@ -52,87 +62,87 @@ def sort_month(df, column_name):
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
     
 sidebar = html.Div([
-            html.H1("Hotel Bookings"),
+            html.H1("Hotel Bookings",style={'text-align': 'center'}),
             html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
-            html.Img(src="assets/icons/6.png")    
-            ],
-            id='left-container'
+            html.Br(),
+            html.Img(src="assets/icons/6.png",style={'width': '100%'})    
+            ],className='left-container' , style={'height': '100%'}           
         )
             
-content = html.Div([
-   
-    dbc.Container(
-    [
-        dbc.Row(
-            [
-                dbc.Col( daq.BooleanSwitch(
-                            id='kids_toggle',
-                            className='toggle',                
-                            label="Guests with kids",
-                            labelPosition="top",
-                            on=False,
-                            color="#E9B000"
-                        ),),
-                dbc.Col(daq.BooleanSwitch(
-                            id='nokids_toggle',
-                            label="Guests without kids",                            
-                            labelPosition="top",
-                            on=True,
-                            color="#E9B000"                        
-                        ),),
-            ],
-            style={'padding':'.4rem', 'marginLeft':'1rem', 'marginTop':'1rem', 'border-radius': '10px', 'backgroundColor': '#1D74C1' },
-            align="center",
-        ),
+content = \
+html.Div(children=[
+    
+    #filter bar
+    html.Div(children=[
+        html.Div(children=[
+                html.Label('Year'),
+                dcc.RangeSlider(
+                    id='rangeslider',
+                    marks={i: str(i) for i in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
+                    min=min(data.arrival_date_year.unique()),
+                    max=max(data.arrival_date_year.unique()),
+                    value=[min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())],
+                    step=1)
+        ],style={'width': '50%','float': 'left'}),
 
-        dbc.Row(
-            [
-                dbc.Col(
-                    dcc.Graph(id="barplot"),
-                    style={'padding':'.4rem', 'marginTop':'1rem', 'border-radius': '10px', 'backgroundColor': '#1D74C1' }
-                ),
-                dbc.Col(html.Img(src="assets/icons/4.png"),
-                style={'width': '250px'}),
-                dbc.Col(dcc.Graph(id="map"),
-                style={'padding':'.4rem', 'marginTop':'1rem', 'border-radius': '10px', 'backgroundColor': '#1D74C1' }),                
-            ],
-            #style={'padding':'.3rem', 'marginLeft':'1rem', 'boxShadow': '#e3e3e3 4px 4px 2px', 'border-radius': '10px', 'backgroundColor': 'white' },
-            align="center",
-        ),
+        html.Div(children=[
+                html.Label('Type of Guest',className='other-labels',style={'margin':'auto','width':'100%'}),
+                dcc.Checklist(
+                id='checkbox',
+                options=list(data.Kids.unique()),
+                value=categories,
+                className='other-labels')
+        ],style={'width': '50%','float': 'left'}),
+    
+    ],
+    className='container',
+    style={'background-color':'#1D74C1','height': '100%'}
+    ),
 
-         dbc.Row(
-             [
-                 dbc.Col(dcc.Graph(id="scatterplot1"),
-                 style={'padding':'.4rem', 'marginTop':'1rem', 'border-radius': '10px', 'backgroundColor': '#1D74C1' }),                
-                 dbc.Col(dcc.Graph(id="piecharts"),
-                 style={'padding':'.4rem', 'marginLeft':'1rem', 'marginTop':'1rem', 'border-radius': '10px', 'backgroundColor': '#1D74C1' }),
-             ],
-             align="center",
-         ),
-         
-         dbc.Row(
-             [
-                html.P("NOVA IMS 2021/2022 - Data Visualization, Group 22: Bruna Duarte, Francisco Ornelas, Isha Pandya, and Lucas Corrêa"), 
-             ],
-            style={'padding':'.4rem', 'marginLeft':'1rem', 'marginTop':'1rem', 'marginBottom':'1rem', 'border-radius': '10px', 'backgroundColor': '#AFD5EB', 'text-align': 'center'},
-            align="center",
-         ),
-    ],    
-    #fluid=True
+
+    #First row of graph
+    html.Div(children=[
+        html.Div(children=[
+            dcc.Graph(id="barplot",style={'border':'solid white'})
+        ],className='columns',style={'background-color':'#1D74C1','width': '35%'}),
+        html.Div(children=[
+            html.Img(src="assets/icons/4.png",style={'width': '100%','object-fit': 'fill'})
+        ],className='columns',style={'width': '30%'}),
+        html.Div(children=[
+            dcc.Graph(id="map")
+        ],className='columns',style={'background-color':'#1D74C1','width': '35%'})
+    ],
+    className='container'
+    ),
+
+
+    #Second row of graphs
+    html.Div(children=[
+
+        html.Div(children=[
+            dcc.Graph(id="scatterplot1")
+        ],className='two columns',style={'background-color':'#1D74C1','width': '49%'}),
+
+        html.Div(children=[
+            dcc.Graph(id="piecharts")
+        ],className='two columns',style={'background-color':'#1D74C1','width': '49%'})
+    ],
+    className='container',
+    style={ 'justify-content': 'space-between'}
     )
-    ])
+
+])
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
 ############################################First Bar Plot##########################################################
 @app.callback(
     Output(component_id='barplot', component_property='figure'),
-    [Input(component_id='kids_toggle', component_property='on'),
-     Input(component_id='nokids_toggle', component_property='on')]
+    [Input(component_id='checkbox', component_property='value')]
 ) 
-def barplot(kids, no_kids):
+def barplot(kids):
     #with kids hotel and year distribution
-    guest_with_kids_hotel = data[(data['children'] != 0) | (data['babies'] != 0)].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
+    guest_with_kids_hotel = data[data['Kids'].isin(kids)].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
     guest_with_kids_hotel.columns = ['arrival_date_year','hotel' , 'guest with kids']
     slider_guest_with_kids_hotel = guest_with_kids_hotel.pivot_table('guest with kids', ['hotel'], 'arrival_date_year')
 
@@ -171,29 +181,33 @@ def barplot(kids, no_kids):
         steps=steps,
         font = dict(color = 'white')
     )]
-    
+
+    fig_bar_kids.update_layout(
+        dict(
+            title=dict(
+                text='Hotel reservations from guests with kids between 2015 and 2017', 
+                font = dict(color = 'white')
+            ),
+            yaxis=dict(
+                title='Number of guests',
+                range=[0,5*(10**3)], 
+                showgrid = False, 
+                color = 'white' 
+            ),
+            plot_bgcolor = '#1D74C1',
+            paper_bgcolor = '#1D74C1',
+            xaxis=dict(color="white")
+        )
+    )
+
     return fig_bar_kids
-
-
-    fig_bar_kids.update_layout(dict(title=dict(text='Hotel reservations from guests with kids between 2015 and 2017', font = dict(color = 'white')),
-                    yaxis=dict(title='Number of guests',
-                                range=[0,5*(10**3)], 
-                        showgrid = False, color = 'white' 
-                                ), plot_bgcolor = '#1D74C1',
-                                    paper_bgcolor = '#1D74C1',
-                                    xaxis=dict(color="white"),
-                                    sliders=sliders,
-                                ))
-
-    return go.Figure(data=slider_guest_with_kids_hotel, layout=fig_bar_kids)
 
 #############################################Second Choropleth######################################################
 @app.callback(
     Output(component_id='map', component_property='figure'),
-    [Input(component_id='kids_toggle', component_property='on'),
-     Input(component_id='nokids_toggle', component_property='on')]
+    [Input(component_id='checkbox', component_property='value')]
 )
-def map(kids, no_kids):
+def map(kids):
 
     country_wise_guests = data[data['is_canceled'] == 'No'].groupby(['country', 'hotel'], as_index=False).size()
     country_wise_guests.columns = ['country', 'No of guests' ,'hotel']
@@ -207,11 +221,10 @@ def map(kids, no_kids):
 ############################################Third Scatter Plot######################################################
 @app.callback(
     Output(component_id='piecharts', component_property='figure'),
-    [Input(component_id='kids_toggle', component_property='on'),
-     Input(component_id='nokids_toggle', component_property='on')]
+    [Input(component_id='checkbox', component_property='value')]
 ) 
-def pie_chart(kids, no_kids):
-    children_market_segment = data[(data['children'] != 0) | (data['babies'] != 0)].groupby(['market_segment', 'hotel'], as_index=False).size()
+def pie_chart(kids):
+    children_market_segment = data[data['Kids'].isin(kids)].groupby(['market_segment', 'hotel'], as_index=False).size()
     children_market_segment.columns= ['market_segment' ,'hotel', 'number_of_guest']
 
     filtered_by_hotel_df = children_market_segment#.loc[children_market_segment['hotel'] == input]
@@ -230,14 +243,12 @@ def pie_chart(kids, no_kids):
 ############################################Forth Scatter Plot######################################################
 @app.callback(
     Output(component_id='scatterplot1', component_property='figure'),
-    [Input(component_id='kids_toggle', component_property='on'),
-     Input(component_id='nokids_toggle', component_property='on')]
-) 
-def scatterplot(kids, no_kids):
+     [Input(component_id='checkbox', component_property='value')])
+def scatterplot(kids):
     # Function for creating a Scatterplot
     
     # Guests without children
-    no_children_month = data[(data['children'] == 0) & (data['babies'] == 0)].groupby(['arrival_date_month'], as_index=False).size()
+    no_children_month = data[data['Kids'].isin(kids)].groupby(['arrival_date_month'], as_index=False).size()
     no_children_month.rename(columns={"arrival_date_month": "month", "size": "number_of_guest"}, inplace=True)
     no_children_month=sort_month(no_children_month, 'month')
     
