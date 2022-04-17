@@ -86,16 +86,11 @@ html {
   }
  
   .columns {
-    /* margin-top: 20px; */
-    /* margin-left: 10x; */
     border-radius: 10px;
     float: left;
-    /* box-sizing: border-box; */
   }
-  /* .columns:first-child {
-    margin-left:  50x; } */
 
-  /* #barplot {
+  #barplot {
     margin-left: 5px;
     margin-right: 5px;
     margin-top: 5px;
@@ -121,7 +116,7 @@ html {
     margin-right: 5px;
     margin-top: 5px;
     border-radius: 10px;
-  } */
+  }
   #data-extract {
     margin-top: 30px;
     width: 100%;

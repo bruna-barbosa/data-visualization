@@ -1,19 +1,5 @@
-from ctypes import alignment
-from turtle import width
-from matplotlib.pyplot import sca
-import seaborn as sns
 import numpy as np
 import pandas as pd
-
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import OneHotEncoder
-from sklearn.impute import SimpleImputer
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
-
-import folium
-from folium.plugins import HeatMap
 
 import plotly.graph_objects as go
 import plotly.express as px
@@ -21,8 +7,7 @@ import plotly.express as px
 import dash
 from dash import html, dcc
 import dash_bootstrap_components as dbc
-import dash_daq as daq
-from dash.dependencies import Input, Output, State
+from dash.dependencies import Input, Output
 from dash.exceptions import PreventUpdate
 
 import sort_dataframeby_monthorweek as sd
@@ -116,13 +101,22 @@ html.Div(children=[
     # First row of Graphs
     html.Div(children=[
         html.Div(children=[
-            dcc.Graph(id="map")
-        ]
-        #,className='columns'
-        ,style={'background-color':'#1D74C1'})
+            #html.Label('Where around The World the Guests are comming from?',style={'width':'60%','float':'left','background-color':'#1D74C1'}),
+            dcc.Graph(id="map"),
+            dcc.Dropdown(id='drop',
+                    options=[{'label': 'World', 'value': 'world'},
+                                {'label': 'Europe', 'value': 'europe'},
+                                {'label': 'Asia', 'value': 'asia'},
+                                {'label': 'North America', 'value': 'north america'},
+                                {'label': 'South America', 'value': 'south america'}
+                            ],
+                    value='world',
+                    className='dropdown'
+            ),  
+        ]),
     ]
     ,className='top-container'
-    #,style={'border':'solid red'}
+    ,style={'background-color':'#1D74C1'}
     ),
 
 
@@ -233,9 +227,10 @@ def barplot(kids,year):
 @app.callback(
     Output(component_id='map', component_property='figure'),
     [Input(component_id='dynamic-dropdown', component_property='value'),
-     Input(component_id='rangeslider', component_property='value')]
+     Input(component_id='rangeslider', component_property='value'),
+     Input(component_id='drop', component_property='value')]
 )
-def map(kids,year):
+def map(kids,year,continent):
 
     filters = (data['Kids'].isin(kids)) & \
               (data['arrival_date_year'].between(year[0],year[1]) & \
@@ -251,12 +246,19 @@ def map(kids,year):
                                hover_name = country_wise_guests['country'], 
                                color_continuous_scale="sunset")
     
-    guests_map.update_layout(margin=dict(l=0, r=0, t=0, b=0),
+    guests_map.update_layout(margin=dict(l=0, r=0, t=50, b=0),
                             paper_bgcolor='#1D74C1',
-                            plot_bgcolor = '#1D74C1'
+                            dragmode=False,
+                            geo=dict(bgcolor= 'rgba(0,0,0,0)'),
+                            legend=dict(font=dict(color='white')),
+                            title=dict(text='Where around The World the Guests are comming from?',
+                                        font = dict(color = 'white',size = 22))
                             )
-
-    guests_map.update_geos(showocean=True, oceancolor='#1D74C1')
+    
+    guests_map.update_geos(
+        visible=False, resolution=50, scope=continent,
+        showcountries=True, countrycolor="#1D74C1",
+        showocean=True, oceancolor='#1D74C1')
 
     return guests_map 
 

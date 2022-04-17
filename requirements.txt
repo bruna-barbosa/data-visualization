@@ -12,3 +12,4 @@ dash-html-components
 dash-core-components
 sort_dataframeby_monthorweek
 requests
+sklearn
