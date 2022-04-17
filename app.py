@@ -249,7 +249,7 @@ def map(kids,year,continent):
                             paper_bgcolor='#1D74C1',
                             dragmode=False,
                             geo=dict(bgcolor= 'rgba(0,0,0,0)'),
-                            legend=dict(font=dict(color='white')),
+                            font=dict(color='white'),
                             title=dict(text='Where around the world are the guests coming from?',
                                         font = dict(color = 'white', size = 22))
                             )
