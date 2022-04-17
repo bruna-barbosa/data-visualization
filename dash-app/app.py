@@ -101,7 +101,6 @@ html.Div(children=[
     # First row of Graphs
     html.Div(children=[
         html.Div(children=[
-            #html.Label('Where around The World the Guests are comming from?',style={'width':'60%','float':'left','background-color':'#1D74C1'}),
             dcc.Graph(id="map"),
             dcc.Dropdown(id='drop',
                     options=[{'label': 'World', 'value': 'world'},
@@ -251,8 +250,8 @@ def map(kids,year,continent):
                             dragmode=False,
                             geo=dict(bgcolor= 'rgba(0,0,0,0)'),
                             legend=dict(font=dict(color='white')),
-                            title=dict(text='Where around The World the Guests are comming from?',
-                                        font = dict(color = 'white',size = 22))
+                            title=dict(text='Where around the world are the guests coming from?',
+                                        font = dict(color = 'white', size = 22))
                             )
     
     guests_map.update_geos(
