@@ -11,5 +11,6 @@ dash_renderer
 dash-html-components
 dash-core-components
 sort_dataframeby_monthorweek
+sorted_months_weekdays
 requests
 sklearn
