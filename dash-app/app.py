@@ -66,7 +66,7 @@ sidebar = html.Div([
             html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
             html.Br(),
             html.Img(src="assets/icons/6.png",style={'width': '100%'})    
-            ],className='left-container' , style={'height': '100%'}           
+            ],className='left-container'            
         )
             
 content = \
@@ -75,39 +75,46 @@ html.Div(children=[
     #filter bar
     html.Div(children=[
         html.Div(children=[
-                html.Label('Year'),
+                html.Label('Year',className='other-labels',style={'width':'100%'}),
                 dcc.RangeSlider(
                     id='rangeslider',
-                    marks={i: str(i) for i in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
+                    marks={h : {'label' : str(h), 'style':{'color':'white'}} for h in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
                     min=min(data.arrival_date_year.unique()),
                     max=max(data.arrival_date_year.unique()),
                     value=[min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())],
                     step=1)
-        ],style={'width': '50%','float': 'left'}),
+        ]
+        ,style={'width': '50%','float': 'left'}
+        ),
 
         html.Div(children=[
-                html.Label('Type of Guest',className='other-labels',style={'margin':'auto','width':'100%'}),
+                html.Label('Type of Guest',className='other-labels',style={'width':'100%'}),
                 dcc.Checklist(
                 id='checkbox',
                 options=list(data.Kids.unique()),
                 value=categories,
                 className='other-labels')
-        ],style={'width': '50%','float': 'left'}),
+        ]
+        ,style={'width': '50%','float': 'left'}
+        ),
     
     ],
-    className='container',
-    style={'background-color':'#1D74C1','height': '100%'}
+    className='container'
+    ,style={'background-color':'#1D74C1'}
     ),
 
 
     #First row of graph
     html.Div(children=[
+
         html.Div(children=[
-            dcc.Graph(id="barplot",style={'border':'solid white'})
+            dcc.Graph(id="barplot")
         ],className='columns',style={'background-color':'#1D74C1','width': '35%'}),
+
         html.Div(children=[
-            html.Img(src="assets/icons/4.png",style={'width': '100%','object-fit': 'fill'})
+            html.Img(src="assets/icons/4.png",style={'width': '100%'})
         ],className='columns',style={'width': '30%'}),
+
         html.Div(children=[
             dcc.Graph(id="map")
         ],className='columns',style={'background-color':'#1D74C1','width': '35%'})
@@ -120,18 +127,17 @@ html.Div(children=[
     html.Div(children=[
 
         html.Div(children=[
-            dcc.Graph(id="scatterplot1")
-        ],className='two columns',style={'background-color':'#1D74C1','width': '49%'}),
+            dcc.Graph(id="scatterplot",style={'box-sizing': 'border-box'})
+        ],className='columns',style={'background-color':'#1D74C1','width': '49%'}),
 
         html.Div(children=[
             dcc.Graph(id="piecharts")
-        ],className='two columns',style={'background-color':'#1D74C1','width': '49%'})
+        ],className='columns',style={'background-color':'#1D74C1','width': '49%','float':'right'})
     ],
-    className='container',
-    style={ 'justify-content': 'space-between'}
+    className='container'
     )
 
-])
+],style={'margin-bottom': '2%','hight':'96%','margin-top': '2%'})
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
@@ -156,11 +162,10 @@ def barplot(kids,year):
                     name='With kids guest'
                    )
     resort_layout =dict(title=dict(text='Hotel reservations with kids', font = dict(color = 'white')),
-                   yaxis=dict(title='Number of guests',
-                             range=[0,80*(10**3)],showgrid = False, color = 'white'
-                            ), 
-                            xaxis=dict(color="white"),plot_bgcolor = '#1D74C1',
-                                paper_bgcolor = '#1D74C1', colorway = ['#E24E42','#E24E42'])
+                        yaxis=dict(title='Number of guests',range=[0,80*(10**3)],showgrid = False, color = 'white'), 
+                        xaxis=dict(color="white"),plot_bgcolor = '#1D74C1',
+                        paper_bgcolor = '#1D74C1', colorway = ['#E24E42','#E24E42'],
+                        font=dict(family="sVerdana, Geneva, Tahoma, sans-serif",size=18,color="white"))
 
     return go.Figure(data=guest_without_kid, layout=resort_layout)
 
@@ -180,10 +185,14 @@ def map(kids,year):
     country_wise_guests = data[filters].groupby(['country'], as_index=False).size()
     country_wise_guests.columns = ['country', 'No of guests' ]
     
-    guests_map = px.choropleth(country_wise_guests, locations = country_wise_guests['country'],
+    guests_map = px.choropleth(country_wise_guests, 
+                               locations = country_wise_guests['country'],
                                color = country_wise_guests['No of guests'], 
                                hover_name = country_wise_guests['country'], 
                                color_continuous_scale="sunset")
+    guests_map.update_layout(margin=dict(l=40, r=40, t=40, b=40),
+                            paper_bgcolor='#1D74C1')
+
     return guests_map 
 
 ############################################Third Scatter Plot######################################################
@@ -201,18 +210,28 @@ def pie_chart(kids,year):
     children_market_segment = data[filters].groupby(['market_segment', 'hotel'], as_index=False).size()
     children_market_segment.columns= ['market_segment' ,'hotel', 'number_of_guest']
 
-    filtered_by_hotel_df = children_market_segment#.loc[children_market_segment['hotel'] == input]
+    colors= ['#E24E42',
+            '#E9B000',
+            '#EB6E80',
+            '#008F95',
+            '#E0FFF8',
+            '#1D74C1']
+
+    data_market_nokids   = dict(type='pie',
+                                labels=children_market_segment.market_segment,
+                                values=children_market_segment.number_of_guest)
+    layout_market_nokids = dict(title=dict(text='Market Segment', font = dict(color = 'white')),
+                                paper_bgcolor = '#1D74C1',
+                                colorway=colors,
+                                font=dict(family="sVerdana, Geneva, Tahoma, sans-serif",size=18,color="white")
+                            )
 
 
-    fig_with_kid_market = px.pie(filtered_by_hotel_df ,values = 'number_of_guest' , names = 'market_segment' , 
-                             color_discrete_sequence=px.colors.sequential.Reds_r , title='market segment with kids') 
-
-
-    return  fig_with_kid_market
+    return  go.Figure(data=[data_market_nokids], layout=layout_market_nokids)
 
 ############################################Forth Scatter Plot######################################################
 @app.callback(
-    Output(component_id='scatterplot1', component_property='figure'),
+    Output(component_id='scatterplot', component_property='figure'),
      [Input(component_id='checkbox', component_property='value'),
      Input(component_id='rangeslider', component_property='value')])
 def scatterplot(kids,year):
@@ -232,11 +251,12 @@ def scatterplot(kids,year):
                   line=dict(color='#E9B000')
                   )
 
-    month_layout = dict(title=dict(text='Favourite month of the year to travel with kids and without kids', font = dict(color = 'white')),
+    month_layout = dict(title=dict(text='Favourite Month of the Year to Travel', font = dict(color = 'white')),
                   xaxis=dict(title='Months',showgrid = False, color = 'white'),
                   yaxis=dict(title='Number of guests',showgrid = False, color = 'white'),
                   plot_bgcolor = '#1D74C1',
                   paper_bgcolor = '#1D74C1',
+                  font=dict(family="sVerdana, Geneva, Tahoma, sans-serif",size=18,color="white")
                   )
 
     return go.Figure(data=no_children_month_trace2, layout=month_layout)
