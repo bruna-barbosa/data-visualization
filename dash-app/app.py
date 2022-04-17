@@ -67,7 +67,7 @@ sidebar = html.Div([
             html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
             html.Br(),
             html.Img(src="assets/icons/6.png",style={'width': '100%'})    
-            ],className='left-container'            
+            ],className='left-container'        
         )
             
 content = \
@@ -94,7 +94,7 @@ html.Div(children=[
                     id='dynamic-dropdown',
                     options=list(data.Kids.unique()),
                     value=categories,
-                    className='other-labels',
+                    className='dropdown',
                     multi=True)
             ]
             ,style={'width': '49%','float': 'left'}
@@ -105,14 +105,16 @@ html.Div(children=[
         ,style={'background-color':'#1D74C1'}
         ),
 
-
     # First row of Graphs
     html.Div(children=[
         html.Div(children=[
             dcc.Graph(id="map")
-        ],className='columns',style={'background-color':'#1D74C1','width': '100%'})
-    ],
-    className='container'
+        ]
+        #,className='columns'
+        ,style={'background-color':'#1D74C1'})
+    ]
+    ,className='top-container'
+    #,style={'border':'solid red'}
     ),
 
 
@@ -121,13 +123,17 @@ html.Div(children=[
 
         html.Div(children=[
             dcc.Graph(id="scatterplot",style={'box-sizing': 'border-box'})
-        ],className='columns',style={'background-color':'#1D74C1','width': '80%'}),
+        ]
+        ,className='columns'
+        ,style={'background-color':'#1D74C1','width': '80%'}),
       
         html.Div(children=[
             html.Img(src="assets/icons/4.png",style={'width': '100%'})
-        ],className='columns',style={'width': '20%', 'height': '100%'})
+        ]
+        ,className='columns'
+        ,style={'width': '20%', 'height': '100%'})
     ],
-    className='container'
+    className='top-container'
     ),
 
     # Third row of Graphs
@@ -135,13 +141,17 @@ html.Div(children=[
 
         html.Div(children=[
             dcc.Graph(id="barplot")
-        ],className='columns',style={'background-color':'#1D74C1','width': '49%'}),
+        ]
+        ,className='columns'
+        ,style={'background-color':'#1D74C1','width': '49%'}),
 
         html.Div(children=[
             dcc.Graph(id="piecharts")
-        ],className='columns',style={'background-color':'#1D74C1','width': '50%','float':'right'})
+        ]
+        ,className='columns'
+        ,style={'background-color':'#1D74C1','width': '50%','float':'right'})
     ],
-    className='container'
+    className='top-container'
     ),
 
     # Authors
@@ -157,7 +167,7 @@ html.Div(children=[
         ,style={'background-color':'#E9B000'}
         )
 
-],style={'margin-bottom': '2%','height':'96%','margin-top': '2%'})
+],style={'margin-bottom': '2%','height':'96%','margin-top': '2%','width': '100%'})
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
@@ -279,29 +289,39 @@ def scatterplot(kids,year):
             (data['arrival_date_year'].between(year[0],year[1])
             )
 
-    no_children_month = data[filters].groupby(['arrival_date_month','Kids'], as_index=False).size()
-    no_children_month.columns=('Month' , 'kids category' , 'number of guest')
+    no_children_month = data[filters].groupby(['Kids','arrival_date_month']).size()
+    no_children_month = pd.DataFrame(no_children_month.groupby(level=0).apply(lambda x: x / float(x.sum()))).reset_index()
+
+    no_children_month.columns=('kids category','Month'  , '% of guest')
     no_children_month=sort_month(no_children_month, 'Month')
-   
+    
     data_agg = []
 
     for kid in kids:
         data_scatter = no_children_month.loc[(no_children_month['kids category'] == kid)]
         data_agg.append(dict(type='scatter',
                                 x=data_scatter['Month'],
-                                y=data_scatter['number of guest'],
-                                name=kid, #color = 'white'
+                                y=data_scatter['% of guest'],
+                                name=kid, 
+                                #color = 'white'
                                 #line=dict(color='#E9B000'),
                                 #mode='markers'
                                 )
                             )
                         
-    month_layout = dict(title=dict(text='Favourite month of the year to travel with kids and without kids', font = dict(color = 'white')),
+
+
+    month_layout = dict(title=dict(text='When people go on Vacation<br><sup>Percentage of Guests in each Month</sup>', font = dict(color = 'white')),
                     xaxis=dict(title='Months',showgrid = False, color = 'white'),
-                    yaxis=dict(title='Number of guests',showgrid = False, color = 'white', type='log'),
+                    yaxis=dict(title='% of Guests',showgrid = True, 
+                                color = 'white',
+                                gridcolor='#9CAEA9',
+                                layer="below traces",
+                                tickformat=".0%"),
                     plot_bgcolor = '#1D74C1',
                     paper_bgcolor = '#1D74C1',colorway = ['#E24E42','#E9B000','#E0FFF8']
                     )
+
 
     return go.Figure(data=data_agg, layout=month_layout)
 
