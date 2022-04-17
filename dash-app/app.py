@@ -217,8 +217,10 @@ def barplot(kids,year):
         data_bar.append(dict(type='bar', x=x_bar, y=y_bar, name=kid))
 
     resort_layout =dict(title=dict(text='Hotel reservations with different categories', font = dict(color = 'white')),
-                    yaxis=dict(title='Number of guests log',type='log',
-                                showgrid = False, color = 'white'
+                    yaxis=dict( title='Number of guests', 
+                                gridcolor='#9CAEA9',
+                                showgrid = True, 
+                                color = 'white'
                                 ), 
                                 xaxis=dict(title = 'Hotel type' , color="white"),plot_bgcolor = '#1D74C1',
                                     paper_bgcolor = '#1D74C1',colorway = ['#E24E42','#E9B000','#E0FFF8'])
@@ -280,7 +282,7 @@ def pie_chart(kids,year):
     layout_market_nokids = dict(title=dict(text='Market Segment', font = dict(color = 'white')),
                                 paper_bgcolor = '#1D74C1',
                                 colorway=colors,
-                                font=dict(family="sVerdana, Geneva, Tahoma, sans-serif",size=18,color="white")
+                                font=dict(family="Verdana, Geneva, Tahoma, sans-serif",size=18,color="white")
                             )
 
 
