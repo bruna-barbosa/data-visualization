@@ -76,16 +76,24 @@ html.Div(children=[
     # Filter bar
     html.Div(children=[
             html.Div(children=[
-                    html.Label('Year',className='other-labels',style={'width':'100%'}),
+                    html.Label( 'Year',
+                                className='other-labels',
+                                style={'width':'100%'}),
                     dcc.RangeSlider(
-                        id='rangeslider',
-                        marks={h : {'label' : str(h), 'style':{'color':'white'}} for h in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
+                        id='rangeslider',     
+                        marks={
+                                h : 
+                                {'label' : 
+                                    str(h), 
+                                    'style':{'color':'white'}
+                                } for h in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
                         min=min(data.arrival_date_year.unique()),
                         max=max(data.arrival_date_year.unique()),
                         value=[min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())],
-                        step=1)
-            ]
-            ,style={'width': '49%','float': 'left'}
+                        step=1),
+            ],   
+                className='n-slider',
+                style={'width': '49%','float': 'left'}
             ),
 
             html.Div(children=[
@@ -128,7 +136,7 @@ html.Div(children=[
         ,style={'background-color':'#1D74C1','width': '80%'}),
       
         html.Div(children=[
-            html.Img(src="assets/icons/4.png",style={'width': '100%'})
+            html.Img(src="assets/icons/11.png",style={'width': '80%', 'margin-left':'15%'})
         ]
         ,className='columns'
         ,style={'width': '20%', 'height': '100%'})
@@ -159,7 +167,7 @@ html.Div(children=[
             html.Div(children=[
                   html.P("NOVA IMS 2021/2022, Data Visualization Group 22: Bruna Duarte, Francisco Ornelas, Isha Pandya, and Lucas Corrêa")  
             ]
-            ,style={'width': '100%','float': 'left'}       
+            ,style={'width': '100%','float': 'left', 'margin-top': '1%'}       
             ),
         
         ],
@@ -208,7 +216,7 @@ def barplot(kids,year):
 
         data_bar.append(dict(type='bar', x=x_bar, y=y_bar, name=kid))
 
-    resort_layout =dict(title=dict(text='Hotel reservations with diffrent categories', font = dict(color = 'white')),
+    resort_layout =dict(title=dict(text='Hotel reservations with different categories', font = dict(color = 'white')),
                     yaxis=dict(title='Number of guests log',type='log',
                                 showgrid = False, color = 'white'
                                 ), 

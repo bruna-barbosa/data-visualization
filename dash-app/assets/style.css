@@ -31,13 +31,12 @@ html {
   }
   .dropdown-labels {
     margin-left: 20px;
-    color: black;
+    color: white;
     font-weight: bold;
   }
   .other-labels {
-    /* margin-left: 20px; */
+    margin-top: 1%; 
     color: white;
-    font-weight: bold;
     size: 70px;
     text-align: center;
     font-family: Verdana, Geneva, Tahoma, sans-serif;
@@ -58,9 +57,8 @@ html {
   } */
 
   .top-container {
-    width: 77%; 
-    margin-left: 23%;
-    margin-right: 23%;
+    width: 70%; 
+    margin-left: 25%;
     margin-top: 1%;
     border-radius: 10px;
     float: left;
@@ -79,11 +77,11 @@ html {
   }
 
   .bottom-container {
-    width: 77%; 
-    margin-left: 23%;
-    
+    width: 70%; 
+    margin-left: 25%;
     margin-top: 1%;
     border-radius: 10px;
+    text-align: center;
     float: left;
   }
  
@@ -209,21 +207,22 @@ html {
     margin-left: 20px;
     margin-right: 20px;
     margin-top: 5px;
+    margin-bottom: 10px;
   }
   .dropdown .Select-control{
-    background-color: green;
+    background-color: #1D74C1;
   }
   .dropdown .Select-menu-outer{
-    background-color: black;
+    background-color: #E24E42;
   }
   .dropdown .Select-value{
-    background-color: #3BA27A;
-    color: red;
+    background-color: #E24E42;
+    color: #E0FFF8;
     font-size: 14px;
   }
   .dropdown .VirtualizedSelectFocusedOption {
-    background-color: #a5ecd1;
-    color: #E24E42;
+    background-color: white;
+    color: #1D74C1;
   }
   .dropdown .VirtualizedSelectOption  {
     font-size: 14px;
@@ -233,18 +232,18 @@ html {
     margin-top: 8px;
   }
   /********************* SLIDER *********************/
-  #n-slider {
+  .rc-slider .rc-slider-with-marks {
     margin-top: 8px;
   }
-  #n-slider .rc-slider-handle  {
-    background-color: #E9B000;
+  .rc-slider .rc-slider-handle  {
+    background-color: #E24E42;
     border: 0px;
   }
-  #n-slider .rc-slider-track {
-    background-color: #E6E6E6;
+  .rc-slider .rc-slider-track {
+    background-color: #E24E42;
   }
-  #n-slider .rc-slider-dot-active {
-    border-color: #E6E6E6;
+  .rc-slider .rc-slider-dot-active {
+    border-color: #E24E42;
   }
 
 
