@@ -216,13 +216,14 @@ def barplot(kids,year):
 
         data_bar.append(dict(type='bar', x=x_bar, y=y_bar, name=kid))
 
-    resort_layout =dict(title=dict(text='Hotel reservations with different categories', font = dict(color = 'white')),
-                    yaxis=dict( title='Number of guests', 
+    resort_layout =dict(title=dict(text='Resort or City Hotel? <br><sup>Hotel Reservations by Hotel Type</sup>', font = dict(color = 'white',size = 22)),
+                        yaxis=dict( title='Number of guests', 
                                 gridcolor='#9CAEA9',
                                 showgrid = True, 
                                 color = 'white'
                                 ), 
-                                xaxis=dict(title = 'Hotel type' , color="white"),plot_bgcolor = '#1D74C1',
+                        legend=dict(font=dict(color='white')),
+                        xaxis=dict(title = 'Hotel type' , color="white"),plot_bgcolor = '#1D74C1',
                                     paper_bgcolor = '#1D74C1',colorway = ['#E24E42','#E9B000','#E0FFF8'])
 
     
@@ -249,8 +250,13 @@ def map(kids,year):
                                color = country_wise_guests['No of guests'], 
                                hover_name = country_wise_guests['country'], 
                                color_continuous_scale="sunset")
-    guests_map.update_layout(margin=dict(l=40, r=40, t=40, b=40),
-                            paper_bgcolor='#1D74C1')
+    
+    guests_map.update_layout(margin=dict(l=0, r=0, t=0, b=0),
+                            paper_bgcolor='#1D74C1',
+                            plot_bgcolor = '#1D74C1'
+                            )
+
+    guests_map.update_geos(showocean=True, oceancolor='#1D74C1')
 
     return guests_map 
 
@@ -269,24 +275,20 @@ def pie_chart(kids,year):
     children_market_segment = data[filters].groupby(['market_segment', 'hotel'], as_index=False).size()
     children_market_segment.columns= ['market_segment' ,'hotel', 'number_of_guest']
 
-    colors= ['#E24E42',
-            '#E9B000',
-            '#EB6E80',
-            '#008F95',
-            '#E0FFF8',
-            '#1D74C1']
+    fig = px.sunburst(children_market_segment, 
+                  path=["hotel", "market_segment"],
+                  values='number_of_guest',
+                  color_discrete_sequence = ['#E9B000','#E0FFF8']
+                  )
 
-    data_market_nokids   = dict(type='pie',
-                                labels=children_market_segment.market_segment,
-                                values=children_market_segment.number_of_guest)
-    layout_market_nokids = dict(title=dict(text='Market Segment', font = dict(color = 'white')),
-                                paper_bgcolor = '#1D74C1',
-                                colorway=colors,
-                                font=dict(family="Verdana, Geneva, Tahoma, sans-serif",size=18,color="white")
-                            )
+    fig.update_layout(margin=dict(t=90, b=30, r=20, l=20),
+                  paper_bgcolor = '#1D74C1',
+                  title=dict(text='How Guests book their Vocations:<br><sup>Market Segment for different types of Hotels</sup>',
+                             font = dict(color = 'white',size = 22)
+                            ))
 
 
-    return  go.Figure(data=[data_market_nokids], layout=layout_market_nokids)
+    return  fig
 
 ############################################Forth Scatter Plot######################################################
 @app.callback(
@@ -321,13 +323,15 @@ def scatterplot(kids,year):
                         
 
 
-    month_layout = dict(title=dict(text='When people go on Vacation<br><sup>Percentage of Guests in each Month</sup>', font = dict(color = 'white')),
+    month_layout = dict(title=dict(text='When people go on Vacation<br><sup>Percentage of Guests in each Month</sup>', font = dict(color = 'white',size = 22)),
                     xaxis=dict(title='Months',showgrid = False, color = 'white'),
                     yaxis=dict(title='% of Guests',showgrid = True, 
                                 color = 'white',
                                 gridcolor='#9CAEA9',
                                 layer="below traces",
                                 tickformat=".0%"),
+                                
+                    legend=dict(font=dict(color='white')),
                     plot_bgcolor = '#1D74C1',
                     paper_bgcolor = '#1D74C1',colorway = ['#E24E42','#E9B000','#E0FFF8']
                     )
