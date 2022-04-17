@@ -186,22 +186,27 @@ def barplot(kids,year):
     filters = (data['Kids'].isin(kids)) & \
               (data['arrival_date_year'].between(year[0],year[1])
               )
-    guest_with_kids_hotel = data[filters].groupby(['arrival_date_year' , 'hotel'], as_index=False).size()
-    guest_with_kids_hotel.columns = ['arrival_date_year','hotel' , 'guest with kids']
-    #slider_guest_with_kids_hotel = guest_with_kids_hotel.pivot_table('guest with kids', ['hotel'], 'arrival_date_year')
+    guest_with_kids_hotel = data[filters].groupby(['hotel' , 'Kids'], as_index=False).size()
+    guest_with_kids_hotel.columns = ['hotel' , 'Kids','no of guest']
+        
+    data_bar = []
+    for kid in kids:
+        df_bar = guest_with_kids_hotel.loc[(guest_with_kids_hotel['Kids'] == kid)]
 
-    guest_without_kid = dict(type='bar',
-                    x=guest_with_kids_hotel['hotel'],
-                    y=guest_with_kids_hotel['guest with kids'], 
-                    name='With kids guest'
-                   )
-    resort_layout =dict(title=dict(text='Hotel reservations with kids', font = dict(color = 'white')),
-                        yaxis=dict(title='Number of guests',range=[0,80*(10**3)],showgrid = False, color = 'white'), 
-                        xaxis=dict(color="white"),plot_bgcolor = '#1D74C1',
-                        paper_bgcolor = '#1D74C1', colorway = ['#E24E42','#E24E42'],
-                        font=dict(family="sVerdana, Geneva, Tahoma, sans-serif",size=18,color="white"))
+        x_bar = df_bar['hotel']
+        y_bar = df_bar['no of guest']
 
-    return go.Figure(data=guest_without_kid, layout=resort_layout)
+        data_bar.append(dict(type='bar', x=x_bar, y=y_bar, name=kid))
+
+    resort_layout =dict(title=dict(text='Hotel reservations with diffrent categories', font = dict(color = 'white')),
+                    yaxis=dict(title='Number of guests log',type='log',
+                                showgrid = False, color = 'white'
+                                ), 
+                                xaxis=dict(title = 'Hotel type' , color="white"),plot_bgcolor = '#1D74C1',
+                                    paper_bgcolor = '#1D74C1',colorway = ['#E24E42','#E9B000','#E0FFF8'])
+
+    
+    return go.Figure(data=data_bar, layout=resort_layout)
 
 #############################################Second Choropleth######################################################
 @app.callback(
@@ -274,26 +279,31 @@ def scatterplot(kids,year):
             (data['arrival_date_year'].between(year[0],year[1])
             )
 
-    no_children_month = data[filters].groupby(['arrival_date_month'], as_index=False).size()
-    no_children_month.rename(columns={"arrival_date_month": "month", "size": "number_of_guest"}, inplace=True)
-    no_children_month=sort_month(no_children_month, 'month')
+    no_children_month = data[filters].groupby(['arrival_date_month','Kids'], as_index=False).size()
+    no_children_month.columns=('Month' , 'kids category' , 'number of guest')
+    no_children_month=sort_month(no_children_month, 'Month')
    
-    no_children_month_trace2 = dict(type='scatter',
-                  x=no_children_month['month'],
-                  y=no_children_month['number_of_guest'],
-                  name='Guests without kids',
-                  line=dict(color='#E9B000')
-                  )
+    data_agg = []
 
-    month_layout = dict(title=dict(text='Favourite Month of the Year to Travel', font = dict(color = 'white')),
-                  xaxis=dict(title='Months',showgrid = False, color = 'white'),
-                  yaxis=dict(title='Number of guests',showgrid = False, color = 'white'),
-                  plot_bgcolor = '#1D74C1',
-                  paper_bgcolor = '#1D74C1',
-                  font=dict(family="sVerdana, Geneva, Tahoma, sans-serif",size=18,color="white")
-                  )
+    for kid in kids:
+        data_scatter = no_children_month.loc[(no_children_month['kids category'] == kid)]
+        data_agg.append(dict(type='scatter',
+                                x=data_scatter['Month'],
+                                y=data_scatter['number of guest'],
+                                name=kid, #color = 'white'
+                                #line=dict(color='#E9B000'),
+                                #mode='markers'
+                                )
+                            )
+                        
+    month_layout = dict(title=dict(text='Favourite month of the year to travel with kids and without kids', font = dict(color = 'white')),
+                    xaxis=dict(title='Months',showgrid = False, color = 'white'),
+                    yaxis=dict(title='Number of guests',showgrid = False, color = 'white', type='log'),
+                    plot_bgcolor = '#1D74C1',
+                    paper_bgcolor = '#1D74C1',colorway = ['#E24E42','#E9B000','#E0FFF8']
+                    )
 
-    return go.Figure(data=no_children_month_trace2, layout=month_layout)
+    return go.Figure(data=data_agg, layout=month_layout)
 
 if __name__ == '__main__':
     app.run_server(debug=True)
