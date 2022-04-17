@@ -284,8 +284,8 @@ def pie_chart(kids,year):
 
     fig.update_layout(margin=dict(t=90, b=30, r=20, l=20),
                   paper_bgcolor = '#1D74C1',
-                  title=dict(text='How Guests book their Vocations:<br><sup>Market Segment for different types of Hotels</sup>',
-                             font = dict(color = 'white',size = 22)
+                  title=dict(text='How Guests book their vacations:<br><sup>Market Segment for different types of Hotels</sup>',
+                             font = dict(color = 'white', size = 22)
                             ))
 
 
