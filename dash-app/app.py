@@ -23,6 +23,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 import dash_daq as daq
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 
 import sort_dataframeby_monthorweek as sd
 
@@ -62,7 +63,7 @@ def sort_month(df, column_name):
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
     
 sidebar = html.Div([
-            html.H1("Hotel Bookings",style={'text-align': 'center'}),
+            html.H1("Hotel Bookings",style={'text-align': 'left'}),
             html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
             html.Br(),
             html.Img(src="assets/icons/6.png",style={'width': '100%'})    
@@ -72,79 +73,112 @@ sidebar = html.Div([
 content = \
 html.Div(children=[
     
-    #filter bar
+    # Filter bar
     html.Div(children=[
-        html.Div(children=[
-                html.Label('Year',className='other-labels',style={'width':'100%'}),
-                dcc.RangeSlider(
-                    id='rangeslider',
-                    marks={h : {'label' : str(h), 'style':{'color':'white'}} for h in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
-                    min=min(data.arrival_date_year.unique()),
-                    max=max(data.arrival_date_year.unique()),
-                    value=[min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())],
-                    step=1)
-        ]
-        ,style={'width': '50%','float': 'left'}
+            html.Div(children=[
+                    html.Label('Year',className='other-labels',style={'width':'100%'}),
+                    dcc.RangeSlider(
+                        id='rangeslider',
+                        marks={h : {'label' : str(h), 'style':{'color':'white'}} for h in range(min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())+1)},
+                        min=min(data.arrival_date_year.unique()),
+                        max=max(data.arrival_date_year.unique()),
+                        value=[min(data.arrival_date_year.unique()), max(data.arrival_date_year.unique())],
+                        step=1)
+            ]
+            ,style={'width': '49%','float': 'left'}
+            ),
+
+            html.Div(children=[
+                    html.Label('Type of Guests',className='other-labels',style={'width':'100%'}),
+                    dcc.Dropdown(
+                    id='dynamic-dropdown',
+                    options=list(data.Kids.unique()),
+                    value=categories,
+                    className='other-labels',
+                    multi=True)
+            ]
+            ,style={'width': '49%','float': 'left'}
+            ),
+        
+        ],
+        className='top-container'
+        ,style={'background-color':'#1D74C1'}
         ),
 
-        html.Div(children=[
-                html.Label('Type of Guest',className='other-labels',style={'width':'100%'}),
-                dcc.Checklist(
-                id='checkbox',
-                options=list(data.Kids.unique()),
-                value=categories,
-                className='other-labels')
-        ]
-        ,style={'width': '50%','float': 'left'}
-        ),
-    
-    ],
-    className='container'
-    ,style={'background-color':'#1D74C1'}
-    ),
 
-
-    #First row of graph
+    # First row of Graphs
     html.Div(children=[
-
-        html.Div(children=[
-            dcc.Graph(id="barplot")
-        ],className='columns',style={'background-color':'#1D74C1','width': '35%'}),
-
-        html.Div(children=[
-            html.Img(src="assets/icons/4.png",style={'width': '100%'})
-        ],className='columns',style={'width': '30%'}),
-
         html.Div(children=[
             dcc.Graph(id="map")
-        ],className='columns',style={'background-color':'#1D74C1','width': '35%'})
+        ],className='columns',style={'background-color':'#1D74C1','width': '100%'})
     ],
     className='container'
     ),
 
 
-    #Second row of graphs
+    # Second row of Graphs
     html.Div(children=[
 
         html.Div(children=[
             dcc.Graph(id="scatterplot",style={'box-sizing': 'border-box'})
+        ],className='columns',style={'background-color':'#1D74C1','width': '80%'}),
+      
+        html.Div(children=[
+            html.Img(src="assets/icons/4.png",style={'width': '100%'})
+        ],className='columns',style={'width': '20%', 'height': '100%'})
+    ],
+    className='container'
+    ),
+
+    # Third row of Graphs
+    html.Div(children=[
+
+        html.Div(children=[
+            dcc.Graph(id="barplot")
         ],className='columns',style={'background-color':'#1D74C1','width': '49%'}),
 
         html.Div(children=[
             dcc.Graph(id="piecharts")
-        ],className='columns',style={'background-color':'#1D74C1','width': '49%','float':'right'})
+        ],className='columns',style={'background-color':'#1D74C1','width': '50%','float':'right'})
     ],
     className='container'
-    )
+    ),
 
-],style={'margin-bottom': '2%','hight':'96%','margin-top': '2%'})
+    # Authors
+    html.Div(children=[
+            html.Div(children=[
+                  html.P("NOVA IMS 2021/2022, Data Visualization Group 22: Bruna Duarte, Francisco Ornelas, Isha Pandya, and Lucas Corrêa")  
+            ]
+            ,style={'width': '100%','float': 'left'}       
+            ),
+        
+        ],
+        className='bottom-container'
+        ,style={'background-color':'#E9B000'}
+        )
+
+],style={'margin-bottom': '2%','height':'96%','margin-top': '2%'})
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+
+############################################Dynamic Dropdown##########################################################
+@app.callback(
+    Output("dynamic-dropdown", "options"),
+    Input("dynamic-dropdown", "search_value")
+)
+
+def update_options(search_value):
+    options=list(data.Kids.unique())
+
+    if not search_value:
+        raise PreventUpdate
+    return [o for o in options if search_value in o["label"]]
+    
 
 ############################################First Bar Plot##########################################################
 @app.callback(
     Output(component_id='barplot', component_property='figure'),
-    [Input(component_id='checkbox', component_property='value'),
+    [Input(component_id='dynamic-dropdown', component_property='value'),
     Input(component_id='rangeslider', component_property='value')]
 ) 
 def barplot(kids,year):
@@ -172,7 +206,7 @@ def barplot(kids,year):
 #############################################Second Choropleth######################################################
 @app.callback(
     Output(component_id='map', component_property='figure'),
-    [Input(component_id='checkbox', component_property='value'),
+    [Input(component_id='dynamic-dropdown', component_property='value'),
      Input(component_id='rangeslider', component_property='value')]
 )
 def map(kids,year):
@@ -198,7 +232,7 @@ def map(kids,year):
 ############################################Third Scatter Plot######################################################
 @app.callback(
     Output(component_id='piecharts', component_property='figure'),
-    [Input(component_id='checkbox', component_property='value'),
+    [Input(component_id='dynamic-dropdown', component_property='value'),
     Input(component_id='rangeslider', component_property='value')]
 ) 
 def pie_chart(kids,year):
@@ -232,7 +266,7 @@ def pie_chart(kids,year):
 ############################################Forth Scatter Plot######################################################
 @app.callback(
     Output(component_id='scatterplot', component_property='figure'),
-     [Input(component_id='checkbox', component_property='value'),
+     [Input(component_id='dynamic-dropdown', component_property='value'),
      Input(component_id='rangeslider', component_property='value')])
 def scatterplot(kids,year):
 
