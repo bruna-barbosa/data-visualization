@@ -250,8 +250,13 @@ def map(kids,year):
                                color = country_wise_guests['No of guests'], 
                                hover_name = country_wise_guests['country'], 
                                color_continuous_scale="sunset")
-    guests_map.update_layout(margin=dict(l=40, r=40, t=40, b=40),
-                            paper_bgcolor='#1D74C1')
+    
+    guests_map.update_layout(margin=dict(l=0, r=0, t=0, b=0),
+                            paper_bgcolor='#1D74C1',
+                            plot_bgcolor = '#1D74C1'
+                            )
+
+    guests_map.update_geos(showocean=True, oceancolor='#1D74C1')
 
     return guests_map 
 
