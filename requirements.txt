@@ -1,16 +1,10 @@
-gunicorn
-seaborn
 numpy
 pandas
-folium
 plotly
 dash
 dash_bootstrap_components
-dash_daq
 dash_renderer
 dash-html-components
 dash-core-components
 sort_dataframeby_monthorweek
 sorted_months_weekdays
-requests
-sklearn
