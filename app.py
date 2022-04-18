@@ -46,6 +46,8 @@ def sort_month(df, column_name):
     return sd.Sort_Dataframeby_Month(df, column_name)
 
 app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+
+server = app.server
     
 sidebar = html.Div([
             html.H1("Hotel Bookings",style={'text-align': 'left'}),
