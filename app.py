@@ -45,7 +45,7 @@ def sort_month(df, column_name):
     # Function for sorting months
     return sd.Sort_Dataframeby_Month(df, column_name)
 
-app = dash.Dash(external_stylesheets=[dbc.themes.BOOTSTRAP])
+app = dash.Dash(__name__)
 
 server = app.server
     
