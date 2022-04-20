@@ -65,6 +65,7 @@ html.Div(children=[
     html.Div(children=[
             html.Div(children=[
                     html.Label( 'Year',
+                                className='other-labels',
                                 style={'width':'100%', 'text-align':'center', 'margin-left':'48%'}),
                     dcc.RangeSlider(
                         id='rangeslider',     
@@ -85,6 +86,7 @@ html.Div(children=[
 
             html.Div(children=[
                     html.Label( 'Type of Guests',
+                                className='other-labels',
                                 style={'width':'100%', 'text-align':'center', 'margin-left':'48%'}),
                     dcc.Dropdown(
                     id='dynamic-dropdown',
@@ -140,6 +142,7 @@ html.Div(children=[
     className='top-container'
     ),
 
+
     # Third row of Graphs
     html.Div(children=[
 
@@ -158,6 +161,7 @@ html.Div(children=[
     className='top-container'
     ),
 
+
     # Authors
     html.Div(children=[
             html.Div(children=[
@@ -171,7 +175,7 @@ html.Div(children=[
         ,style={'background-color':'#E9B000'}
         )
 
-],style={'margin-bottom': '2%','height':'96%','margin-top': '2%','width': '100%'})
+],style={'margin-bottom': '1%','height':'50%','width': '100%'})
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
 
