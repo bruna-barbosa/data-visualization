@@ -45,7 +45,8 @@ def sort_month(df, column_name):
     # Function for sorting months
     return sd.Sort_Dataframeby_Month(df, column_name)
 
-app = dash.Dash(__name__)
+external_stylesheets=["./assets/style.css"]
+app = dash.Dash(__name__, external_stylesheets = external_stylesheets)
 
 server = app.server
     
@@ -53,7 +54,7 @@ sidebar = html.Div([
             html.H1("Hotel Bookings",style={'text-align': 'left'}),
             html.P("In this project we intend to explore booking information for a city hotel and a resort hotel, comparing the differences between the choices made by guests with and without children along the years."),
             html.Br(),
-            html.Img(src="assets/icons/6.png",style={'width': '100%'})    
+            html.Img(src=app.get_asset_url('./icons/6.png'),style={'width': '100%'})    
             ],className='left-container'        
         )
             
@@ -64,8 +65,7 @@ html.Div(children=[
     html.Div(children=[
             html.Div(children=[
                     html.Label( 'Year',
-                                className='other-labels',
-                                style={'width':'100%'}),
+                                style={'width':'100%', 'text-align':'center', 'margin-left':'48%'}),
                     dcc.RangeSlider(
                         id='rangeslider',     
                         marks={
@@ -84,7 +84,8 @@ html.Div(children=[
             ),
 
             html.Div(children=[
-                    html.Label('Type of Guests',className='other-labels',style={'width':'100%'}),
+                    html.Label( 'Type of Guests',
+                                style={'width':'100%', 'text-align':'center', 'margin-left':'48%'}),
                     dcc.Dropdown(
                     id='dynamic-dropdown',
                     options=list(data.Kids.unique()),
@@ -131,7 +132,7 @@ html.Div(children=[
         ,style={'background-color':'#1D74C1','width': '80%'}),
       
         html.Div(children=[
-            html.Img(src="assets/icons/11.png",style={'width': '80%', 'margin-left':'15%'})
+            html.Img(src=app.get_asset_url('./icons/11.png'),style={'width': '80%', 'margin-left':'15%'})
         ]
         ,className='columns'
         ,style={'width': '20%', 'height': '100%'})
@@ -173,12 +174,6 @@ html.Div(children=[
 ],style={'margin-bottom': '2%','height':'96%','margin-top': '2%','width': '100%'})
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
-
-@app.callback(
-    app.get_asset_url('assets/style.css'),
-    app.get_asset_url('assets/6.png'),
-    app.get_asset_url('assets/11.png')
-)
 
 ############################################Dynamic Dropdown##########################################################
 @app.callback(
