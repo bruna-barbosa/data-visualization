@@ -47,10 +47,6 @@ def sort_month(df, column_name):
 
 app = dash.Dash(__name__)
 
-app.get_asset_url('assets/style.css')
-app.get_asset_url('assets/6.png')
-app.get_asset_url('assets/11.png')
-
 server = app.server
     
 sidebar = html.Div([
@@ -177,6 +173,12 @@ html.Div(children=[
 ],style={'margin-bottom': '2%','height':'96%','margin-top': '2%','width': '100%'})
 
 app.layout = html.Div([dcc.Location(id="url"), sidebar, content])
+
+@app.callback(
+    app.get_asset_url('assets/style.css'),
+    app.get_asset_url('assets/6.png'),
+    app.get_asset_url('assets/11.png')
+)
 
 ############################################Dynamic Dropdown##########################################################
 @app.callback(
